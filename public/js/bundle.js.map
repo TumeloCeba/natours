@@ -1,0 +1,1 @@
+{"version":3,"sources":["index.js"],"names":["console","log"],"mappings":"AAAA;AACA;AACA;AAEAA,OAAO,CAACC,GAAR,CAAY,QAAZ","file":"bundle.js","sourceRoot":"..\\..\\starter\\public\\js","sourcesContent":["//script(src='https://cdnjs.cloudflare.com/ajax/libs/axios/0.25.0/axios.min.js')\n//script(src='/js/mapbox.js')\n//script(src='/js/login.js')\n\nconsole.log('parcel');\n"]}
