@@ -8,7 +8,7 @@
     "start:prod": "SET NODE_ENV=production& nodemon server.js",
     "debug": "ndb server.js",
     "watch:js": "parcel watch ./starter/public/js/index.js --out-dir ./starter/public/js --out-file bundle.js --no-hmr --public-url .",
-    "build:js": "parcel watch ./starter/public/js/index.js --out-dir ./starter/public/js --out-file bundle.js --no-hmr"
+    "build:js": "parcel build ./starter/public/js/index.js --out-dir ./starter/public/js --out-file bundle.js"
   },
   "author": "Tumelo Ceba",
   "license": "ISC",
