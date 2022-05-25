@@ -81,7 +81,7 @@ app.use(
 );
 
 app.use(compression());
-
+app.use(cors());
 app.use((request, response, next) => {
   request.requestTime = new Date().toISOString();
   next();
@@ -104,7 +104,7 @@ app.use('/api/v1/users', userRouter);
 app.use('/api/v1/reviews', reviewRouter);
 app.use('/api/v1/bookings', bookingRouter);
 app.all('*', (request, response, next) => {
-  response.header('Access-Control-Allow-Origin', '*');
+  //response.header('Access-Control-Allow-Origin', '*');
   //response.status(404).json({
   //  status: 'fail',
   //  message: `Can't find ${request.originalUrl} on this server`,
