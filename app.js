@@ -21,8 +21,8 @@ const viewRouter = require('./routes/viewRoutes');
 
 const app = express();
 
-
-
+/*since heroku acts as a proxy, x-forwarded-proto header will be set*/
+app.enable('trust proxy');
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 
@@ -33,7 +33,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'starter/public')));
 
 // Set Security HTTP headers
-//app.use(helmet());
+app.use(helmet());
 
 // Development Logging
 if (process.env.NODE_ENV === 'development') {
