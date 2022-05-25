@@ -50,7 +50,6 @@ exports.getAccount = (request, response) => {
 };
 
 exports.getMyTours = catchAsync(async (request, response, next) => {
-
   // 1) Find all bookings
   const bookings = await Booking.find({ user: request.user._id });
 
@@ -83,3 +82,12 @@ exports.updateUserData = catchAsync(async (request, response, next) => {
     user: updatedUser,
   });
 });
+
+//response.locals.variableName makes the variable available across all pages
+exports.alerts = (request, response, next) => {
+  const { alert } = request.query;
+  if (alert === 'booking')
+    response.locals.alert = `Your booking was successful, Please check your email for confirmation, If your booking doesn't show up here immediately, please come back later.`;
+
+  next();
+};
