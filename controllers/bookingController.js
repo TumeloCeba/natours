@@ -1,5 +1,6 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const Tour = require('../models/tourModel');
+const User = require('../models/userModel');
 const Booking = require('../models/bookingModel');
 const catchAsync = require('../utils/catchAsync');
 const factory = require('./handlerFactory');
@@ -12,9 +13,7 @@ exports.getCheckoutSession = catchAsync(async (request, response, next) => {
 
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ['card'],
-    success_url: `${request.protocol}://${request.get('host')}/?tour=${
-      request.params.tourId
-    }&user=${request.user._id}&price=${tour.price}`,
+    success_url: `${request.protocol}://${request.get('host')}/my-tours`,
     cancel_url: `${request.protocol}://${request.get('host')}/tour/${
       tour.slug
     }/`,
@@ -41,18 +40,32 @@ exports.getCheckoutSession = catchAsync(async (request, response, next) => {
   });
 });
 
-exports.createBookingCheckout = catchAsync(async (request, response, next) => {
-  // This is temporary because it's insecure
-  const { tour, user, price } = request.query;
-  if (!tour || !user || !price) {
-    return next();
+const createBookingCheckout = async (session) => {
+  const tour = session.client_reference_id;
+  const user = await User.findOne({ email: session.customer_email });
+  const price = session.line_items[0].amount / 100;
+  await Booking.create({ tour, user: user._id, price });
+};
+
+exports.webhookChecout = (request, response, next) => {
+  let event;
+  try {
+    const signature = request.hearders['stripe-signature'];
+    event = stripe.webhooks.contructEvent(
+      request.body,
+      signature,
+      process.env.STRIPE_WEBHOOK_SIGNING_SECRET
+    );
+  } catch (error) {
+    return response.status(400).send(`Webhook error: ${error.message}`);
   }
 
-  await Booking.create({ tour, user, price });
+  if (event.type === 'checkout.session.completed') {
+    createBookingCheckout(event.data.object);
+  }
 
-  //create another request to the url
-  response.redirect(request.originalUrl.split('?')[0]);
-});
+  response.status(200).json({ received: true });
+};
 
 //CREATE
 exports.createOne = factory.createOne(Booking);

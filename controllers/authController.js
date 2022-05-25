@@ -20,12 +20,13 @@ const signToken = (id) =>
 
 const createSendToken = (user, statusCode, request, response) => {
   const token = signToken(user._id);
+  console.log(request.headers);
   const cookieOptions = {
     expires: new Date(
       Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
     ),
     //Cookie will only be sent on HTTPS/Encrypted connection
-    secure: request.secure || request.readers('x-forward-proto') === 'https',
+    secure: request.secure || request.headers['x-forward-proto'] === 'https',
     //Cookie cannot be moditifed by the browser to prevent cross site attacks
     httpOnly: true,
   };
